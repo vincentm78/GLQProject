@@ -28,13 +28,13 @@ public abstract class Personnage implements Cloneable {
 	}
 	@Override
 	public String toString() {
-		return nom + "*" + sante + "*D:" + premier +"*";
+		return getNom() + "*" + getSante() + "*D:" + premier +"*";
 	}
 	public int attaque() {
 		return premier.attaque();
 	}
 	public int defense() {
-		return sante + premier.defense() ; 
+		return getSante() + premier.defense() ; 
 	}
 	public ArrayList sac() {
 		return new ArrayList<>(sac);
@@ -46,8 +46,8 @@ public abstract class Personnage implements Cloneable {
 			points2 -= attaque();
 			points1 -= autre.attaque();
 		}
-		if ( points1 > points2 && points1 > 0 ) return nom;
-		if ( points2 > points1 && points2 > 0) return autre.nom;
+		if ( points1 > points2 && points1 > 0 ) return getNom();
+		if ( points2 > points1 && points2 > 0) return autre.getNom();
 		return null;
 	}
 	@Override
@@ -65,7 +65,13 @@ public abstract class Personnage implements Cloneable {
 	public boolean equals(final Object o) {
 		if ( o == this) return true;
 		if ( ! ( o instanceof Personnage)) return false;
-		return nom.equals(((Personnage)o).nom) ;
+		return getNom().equals(((Personnage)o).getNom()) ;
+	}
+	public String getNom() {
+		return nom;
+	}
+	public int getSante() {
+		return sante;
 	}
 
 }

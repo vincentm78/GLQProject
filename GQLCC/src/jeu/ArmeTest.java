@@ -1,38 +1,62 @@
 package jeu;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
 
 public class ArmeTest {
 
+	Arme arme;
+	
+	@BeforeEach
+	public void setUp() {
+		this.arme = new Arme("Epée", 50);
+	}
+	
+	@ParameterizedTest
+	@CsvSource({"-5,-5","20,20","B60,60","100,100"})
+	void testConstructeur(Integer i, Integer i2) {
+		assertEquals(new Arme("Marteau", i).attaque(), i2);
+	}
+	
+    @Test
+    public void testConstruction() {
+        
+        assertEquals(50, arme.valeur());
+    }
+
     @Test
     public void testAttaque() {
-        Arme arme = new Arme("Epée", 30);
-        assertEquals(30, arme.attaque());
+        assertEquals(50, arme.attaque());
     }
 
     @Test
     public void testDefense() {
-        Arme arme = new Arme("Hache", 25);
         assertEquals(0, arme.defense());
     }
 
     @Test
     public void testEligible() {
-        Arme arme1 = new Arme("Arc", 10);
+        Arme arme1 = new Arme("Hache", 15);
         assertFalse(arme1.eligible());
-
-        Arme arme2 = new Arme("Lance", 25);
-        assertTrue(arme2.eligible());
+        assertTrue(arme.eligible());
     }
 
     @Test
     public void testEquals() {
-        Arme arme1 = new Arme("Dague", 15);
-        Arme arme2 = new Arme("Dague", 15);
-        Arme arme3 = new Arme("Epée", 20);
-
-        assertTrue(arme1.equals(arme2));
-        assertFalse(arme1.equals(arme3));
+        Arme arme2 = new Arme("Epée", 50);
+        Arme arme3 = new Arme("Hache", 50);
+        assertTrue(arme.equals(arme2));
+        assertFalse(arme.equals(arme3));
+    }
+    
+    
+    @Test
+    public void testToString() {
+    	arme.toString();
     }
 }

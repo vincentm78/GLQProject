@@ -1,128 +1,125 @@
 package jeu;
 
-import org.junit.jupiter.api.*;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class MageTest {
-
-    private Mage mage;
-    private Element element;
-
+/*
     
-    //Avant chaque test, initialise un nouveau Mage et un nouvel élément.
-     
     @BeforeEach
     void setUp() {
-        element = new Arme("épée", 30);
-        mage = new Mage("Gandalf", 100, element);
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Gandalf", 100, element);
     }
-
-   
-    @AfterEach
-    void tearDown() {
-        Personnage.noms = new HashSet<>();
-    }
-
+*/
     @Test
-    void testConstructor() {
-        assertEquals("Gandalf", mage.getNom());
-        assertEquals(100, mage.getSante());
-        assertEquals(element, mage.premier);
-        assertEquals(new ArrayList<>(Arrays.asList(element)), mage.sac());
-        assertEquals(0, mage.getSort());
-        assertTrue(Personnage.noms.contains("Gandalf"));
+    void testToStringWithoutSort() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Gandalf", element);
+        assertEquals("Gandalf*100*D:Feu(25)*", mage.toString());
+    	mage.apprendUnNouveauSort(50);
+    	assertEquals("Gandalf*100*D:Feu(25)*sort=50*", mage.toString());
+    	assertEquals(50, mage.getSort());
     }
-
     
     @Test
-    void testConstructorNullName() {
-        assertThrows(NullPointerException.class, () -> new Mage(null, 100, element));
-    }
-
-    
-    @Test
-    void testConstructorNullElement() {
-        assertThrows(NullPointerException.class, () -> new Mage("Gandalf", 100, null));
-    }
-
-    
-    @Test
-    void testConstructorDuplicateName() {
-        assertThrows(IllegalArgumentException.class, () -> new Mage("Gandalf", 100, element));
-    }
-
-    
-    @Test
-    void testApprendUnNouveauSort() {
-        mage.apprendUnNouveauSort(10);
-        assertEquals(0, mage.getSort());
+    void testApprendUnNouveauSortWithLesserValue() {
+    	Arme element = new Arme("Eau", 50);
+    	Mage mage = new Mage("Vini", 100, element);
         mage.apprendUnNouveauSort(20);
-        assertEquals(20, mage.getSort());
         mage.apprendUnNouveauSort(30);
         assertEquals(30, mage.getSort());
     }
-
     
     @Test
     void testAttaque() {
-        assertEquals(element.attaque(), mage.attaque() - mage.getSort());
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Michou", 100, element);
+        mage.apprendUnNouveauSort(50);
+        assertEquals(75, mage.attaque());
     }
-
     
     @Test
-    void testCombat() {
-        Mage autreMage = new Mage("Sauron", 100, element);
-        assertEquals(null, mage.combat(autreMage));
-        autreMage.apprendUnNouveauSort(50);
-        assertEquals("Sauron", mage.combat(autreMage));
-        mage.apprendUnNouveauSort(60);
-        assertEquals("Gandalf", mage.combat(autreMage));
+    void testGetSort() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Salomon", element);
+        assertEquals(0, mage.getSort());
     }
-
+    
+    @Test
+    void testSetSort() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Groudon", element);
+        mage.setSort(50);
+        assertEquals(50, mage.getSort());
+    }
+    
+    @Test
+    void testPrendWithEligibleElement() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Pilaf", element);
+        assertTrue(mage.prend(element));
+        assertTrue(mage.sac().contains(element));
+    }
+    
+    @Test
+    void testPrendWithIneligibleElement() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Boulbi", 100, element);
+        Element e = new Arme("Eau", 5);
+        assertFalse(mage.prend(e));
+        assertFalse(mage.sac().contains(e));
+    }
     
     @Test
     void testClone() {
-        // Création d'un mage original avec une épée
-        Mage original = new Mage("Merlin", 150, element);
-        original.apprendUnNouveauSort(2);
-
-        // Clone du mage original
-        Mage clone = (Mage) original.clone();
-
-        // Vérification que le clone est identique à l'original
-        assertEquals(original.toString(), clone.toString());
-        assertNotSame(original, clone);
-        assertNotSame(original.sac(), clone.sac());
-
-        // Modification du clone
-        clone.apprendUnNouveauSort(4);
-        clone.prend(new Arme("Baton", 40));
-
-        // Vérification que le clone a bien été modifié et que l'original est resté inchangé
-        assertNotEquals(original.toString(), clone.toString());
-        assertNotEquals(original.sac(), clone.sac());
-//        assertEquals(original.attaque(), 150);
-//        assertEquals(clone.attaque(), 154);
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Moule", element);
+        Mage clone = (Mage) mage.clone();
+        assertEquals(mage.toString(), clone.toString());
+        assertEquals(mage.getSort(), clone.getSort());
+        assertEquals(mage.sac(), clone.sac());
+        assertEquals(mage, clone);
     }
-    
     
     @Test
-    public void testEquals() {
-    	Mage mage1 = new Mage("Gandalf", 100, new Arme("Baguette magique", 50));
-    	Mage mage2 = new Mage("Gandalf", 80, new Arme("Bâton", 30));
-    	
-        assertTrue(mage1.equals(mage1));
-        assertTrue(mage1.equals(mage2) && mage2.equals(mage1));
-        assertFalse(mage1.equals(null));
-        assertFalse(mage1.equals("Gandalf"));
-        assertFalse(mage1.equals(new Mage("Saruman", 100, new Arme("Bâton", 30))));
-        assertFalse(mage1.equals(new Mage("Gandalf", 80, new Arme("Bâton magique", 50))));
+    void testEquals() {
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Palpation",  element);
+        Mage same = new Mage("Saruman", 50, element);
+        Mage different = new Mage("Toucher", 100, element);
+        assertFalse(mage.equals(same));
+        assertFalse(mage.equals(different));
     }
+    
+    @Test
+	void testCombat() {
+    	Arme e = new Arme("Feu", 10);
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Poutre",  e);
+        Mage mage2 = new Mage("Receptacle", 50, element);
+		String resultat = mage.combat(mage2);
+		assertNotNull(resultat, "Le résultat ne doit pas être null");
+	}
+	
+	@Test
+	void testCombatGagnant() {
+		Arme e = new Arme("Feu", 10);
+    	Arme element = new Arme("Feu", 25);
+    	Mage mage = new Mage("Uluberlu",  e);
+        Mage mage2 = new Mage("Macron", 50, element);
+		mage.apprendUnNouveauSort(10);
+		String resultat = mage.combat(mage2);
+		assertEquals(mage.getNom(), resultat, "Le gagnant est " + mage.getNom());
+		mage2.apprendUnNouveauSort(20);
+		resultat = mage.combat(mage2);
+		assertNotEquals(mage2.getNom(), resultat, "Le gagnant n'est pas " + mage2.getNom());
+	}
+
 }

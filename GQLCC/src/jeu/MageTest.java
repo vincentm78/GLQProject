@@ -5,23 +5,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 class MageTest {
-/*
+
     
-    @BeforeEach
-    void setUp() {
-    	Arme element = new Arme("Feu", 25);
-    	Mage mage = new Mage("Gandalf", 100, element);
-    }
-*/
+    @Mock
+	private Arme element;
+	@Mock
+	private Protection protection;
+
+	@BeforeEach
+	void initialisation() {
+		element = mock(Arme.class);
+		protection = mock(Protection.class);
+	}
+
     @Test
     void testToStringWithoutSort() {
-    	Arme element = new Arme("Feu", 25);
+    	
     	Mage mage = new Mage("Gandalf", element);
+    	when(element.toString()).thenReturn("Feu(25)");
         assertEquals("Gandalf*100*D:Feu(25)*", mage.toString());
     	mage.apprendUnNouveauSort(50);
     	assertEquals("Gandalf*100*D:Feu(25)*sort=50*", mage.toString());
@@ -30,7 +39,6 @@ class MageTest {
     
     @Test
     void testApprendUnNouveauSortWithLesserValue() {
-    	Arme element = new Arme("Eau", 50);
     	Mage mage = new Mage("Vini", 100, element);
         mage.apprendUnNouveauSort(20);
         mage.apprendUnNouveauSort(30);
@@ -39,7 +47,7 @@ class MageTest {
     
     @Test
     void testAttaque() {
-    	Arme element = new Arme("Feu", 25);
+    	when(element.attaque()).thenReturn(25);
     	Mage mage = new Mage("Michou", 100, element);
         mage.apprendUnNouveauSort(50);
         assertEquals(75, mage.attaque());
@@ -47,14 +55,12 @@ class MageTest {
     
     @Test
     void testGetSort() {
-    	Arme element = new Arme("Feu", 25);
     	Mage mage = new Mage("Salomon", element);
         assertEquals(0, mage.getSort());
     }
     
     @Test
     void testSetSort() {
-    	Arme element = new Arme("Feu", 25);
     	Mage mage = new Mage("Groudon", element);
         mage.setSort(50);
         assertEquals(50, mage.getSort());
@@ -62,24 +68,24 @@ class MageTest {
     
     @Test
     void testPrendWithEligibleElement() {
-    	Arme element = new Arme("Feu", 25);
-    	Mage mage = new Mage("Pilaf", element);
+    	when(element.eligible()).thenReturn(true);
+    	Protection p = mock(Protection.class);
+    	Mage mage = new Mage("Pilaf", p);
         assertTrue(mage.prend(element));
         assertTrue(mage.sac().contains(element));
     }
     
     @Test
     void testPrendWithIneligibleElement() {
-    	Arme element = new Arme("Feu", 25);
-    	Mage mage = new Mage("Boulbi", 100, element);
-        Element e = new Arme("Eau", 5);
-        assertFalse(mage.prend(e));
-        assertFalse(mage.sac().contains(e));
+    	when(element.eligible()).thenReturn(false);
+    	Protection p = mock(Protection.class);
+    	Mage mage = new Mage("Boulbi", 100, p);
+        assertFalse(mage.prend(element));
+        assertFalse(mage.sac().contains(element));
     }
     
     @Test
     void testClone() {
-    	Arme element = new Arme("Feu", 25);
     	Mage mage = new Mage("Moule", element);
         Mage clone = (Mage) mage.clone();
         assertEquals(mage.toString(), clone.toString());
@@ -90,28 +96,30 @@ class MageTest {
     
     @Test
     void testEquals() {
-    	Arme element = new Arme("Feu", 25);
-    	Mage mage = new Mage("Palpation",  element);
+    	Mage mage = new Mage("Mortae",  element);
         Mage same = new Mage("Saruman", 50, element);
-        Mage different = new Mage("Toucher", 100, element);
+        Mage different = new Mage("Arkman", 100, element);
         assertFalse(mage.equals(same));
         assertFalse(mage.equals(different));
     }
     
     @Test
 	void testCombat() {
-    	Arme e = new Arme("Feu", 10);
-    	Arme element = new Arme("Feu", 25);
-    	Mage mage = new Mage("Poutre",  e);
-        Mage mage2 = new Mage("Receptacle", 50, element);
+    	when(element.attaque()).thenReturn(10);
+		when(element.defense()).thenReturn(0);
+    	Mage mage = new Mage("Poutre",  element);
+        Mage mage2 = new Mage("Filou", 50, element);
 		String resultat = mage.combat(mage2);
 		assertNotNull(resultat, "Le résultat ne doit pas être null");
 	}
 	
 	@Test
 	void testCombatGagnant() {
-		Arme e = new Arme("Feu", 10);
-    	Arme element = new Arme("Feu", 25);
+		Arme e = mock(Arme.class);
+		when(e.attaque()).thenReturn(10);
+		when(e.defense()).thenReturn(0);
+		when(element.attaque()).thenReturn(25);
+		when(element.defense()).thenReturn(0);
     	Mage mage = new Mage("Uluberlu",  e);
         Mage mage2 = new Mage("Macron", 50, element);
 		mage.apprendUnNouveauSort(10);

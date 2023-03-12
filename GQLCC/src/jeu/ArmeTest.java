@@ -3,14 +3,16 @@ package jeu;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeEach;
 
 public class ArmeTest {
 
 	Arme arme;
+	
+	
 	
 	@BeforeEach
 	public void setUp() {
@@ -48,10 +50,13 @@ public class ArmeTest {
 
     @Test
     public void testEquals() {
+    	Mage mage = mock(Mage.class);
         Arme arme2 = new Arme("Epée", 50);
         Arme arme3 = new Arme("Hache", 50);
         assertTrue(arme.equals(arme2));
         assertFalse(arme.equals(arme3));
+        assertTrue(arme.equals(arme));
+        assertFalse(arme.equals(mage));
     }
     
     

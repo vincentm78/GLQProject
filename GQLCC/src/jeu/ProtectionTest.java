@@ -1,19 +1,12 @@
 package jeu;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ProtectionTest {
 	
-	/*Protection protection; 
-	
-	@BeforeEach
-	private void setup() {
-		protection = new Protection("Bouclier", 10);
-	}
-	*/
 	@Test
 	
 	void testConstructeur() {
@@ -30,11 +23,16 @@ class ProtectionTest {
 	
 	@Test
 	void testEquals() {
+		Mage a = mock(Mage.class);
 		Protection protection1 = new Protection("Bouclier", 10);
 		Protection protection2 = new Protection("Bouclier", 10);
 		Protection protection3 = new Protection("Casque", 5);
 		assertEquals(protection1, protection2);
 		assertNotEquals(protection1, protection3);
+		assertTrue(protection1.equals(protection2));
+		assertTrue(protection1.equals(protection1));
+		assertFalse(protection1.equals(a));
+		
 	}
 	
 	@Test

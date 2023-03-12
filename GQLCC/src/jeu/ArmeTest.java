@@ -18,7 +18,7 @@ public class ArmeTest {
 	}
 	
 	@ParameterizedTest
-	@CsvSource({"-5,-5","20,20","B60,60","100,100"})
+	@CsvSource({"-5,-5","20,20","60,60","100,100"})
 	void testConstructeur(Integer i, Integer i2) {
 		assertEquals(new Arme("Marteau", i).attaque(), i2);
 	}
